@@ -75,17 +75,11 @@ class SQLiteDataManager(DataManagerInterface):
         self.db.session.add(movie)
         self.db.session.commit()
 
-    def update_movie(self, id, name=None, director=None, year=None, rating=None, user_favourite=None):
-        update_fields = {k: v for k, v in {
-            "name": name,
-            "director": director,
-            "year": year,
-            "rating": rating,
-            "user_favourite": user_favourite
-        }.items() if v is not None}
+    def update_movie(self, movie, info):
+        update_fields = {k: v for k, v in info.items() if v is not None}
         if update_fields:
             self.db.session.execute(
-                self.db.update(Movie).where(Movie.id == id).values(**update_fields)
+                self.db.update(Movie).where(Movie.id == movie.id).values(**update_fields)
             )
             self.db.session.commit()
 

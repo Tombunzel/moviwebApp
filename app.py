@@ -87,11 +87,13 @@ def update_movie(user_id, movie_id):
         return redirect(url_for('home'))
 
     if request.method == 'POST':
-        movie_to_update.name = request.form['name']
-        movie_to_update.director = request.form['director']
-        movie_to_update.rating = request.form['rating']
-        movie_to_update.year = request.form['year']
-        db.session.commit()
+        new_info = {
+            'name': request.form['name'],
+            'director': request.form['director'],
+            'rating': request.form['rating'],
+            'year': request.form['year']
+        }
+        data_manager.update_movie(movie_to_update, new_info)
         flash("Movie successfully updated", "success")
         return redirect(url_for('home'))
 
