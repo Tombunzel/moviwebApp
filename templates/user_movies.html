@@ -8,6 +8,20 @@
     <title>Users - MovieWeb App</title>
   </head>
   <body>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div id="flash-message" class="flash-message">
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            <a href="#close" class="close-button">&times;</a>
+        </div>
+    {% endif %}
+    {% endwith %}
+
     <h1>User {{ user_id }} Movies</h1>
       <div>
         {% for movie in movies %}
@@ -19,10 +33,15 @@
                 <img class="flag-icon" src="{{ movie.flag_url }}">
               </a>
               <p>{{ movie.rating }}</p>
-              <form class="action_button" action="/users/{{ user_id }}/update_movie/{{ movie.id }}>" method="post">
+              <form class="action_button" action="/users/{{ user_id }}/update_movie/{{ movie.id }}" method="get">
                 <input type="hidden" name="user_id" value="{{ user_id }}">
                 <input type="hidden" name="movie_id" value="{{ movie.id }}">
                 <input type="submit" value="Update Movie" class="action-button">
+              </form>
+              <form class="action_button" action="/users/{{ user_id }}/delete_movie/{{ movie.id }}" method="post">
+                <input type="hidden" name="user_id" value="{{ user_id }}">
+                <input type="hidden" name="movie_id" value="{{ movie.id }}">
+                <input type="submit" value="Delete Movie" class="delete-button">
               </form>
 
           </div>
