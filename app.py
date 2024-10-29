@@ -1,9 +1,6 @@
 import os
-
 import sqlalchemy
 from flask import Flask, render_template, request, flash, redirect, url_for
-from sqlalchemy import and_
-
 from datamanager.sqlite_data_manager import SQLiteDataManager
 from models import User, Movie, db
 
