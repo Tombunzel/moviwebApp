@@ -1,6 +1,4 @@
-from sqlalchemy import select
-
-from models import db, User, Movie, user_movie_favorites
+from models import db, User, Movie
 from datamanager.data_manager_interface import DataManagerInterface
 from datamanager.api_fetcher import fetch_api_movie_dict, fetch_country_flag_url
 
@@ -71,7 +69,8 @@ class SQLiteDataManager(DataManagerInterface):
         movie.imdb_url = f"https://www.imdb.com/title/{omdb_dict['imdbID']}"
         movie.director = omdb_dict['Director']
         movie.year = omdb_dict['Year']
-        country = omdb_dict['Country'].split(',')[0]
+        movie.user_id = user_id
+        # country = omdb_dict['Country'].split(',')[0]
         # movie.flag_url = fetch_country_flag_url(str(country))
         self.db.session.add(movie)
         self.db.session.commit()
