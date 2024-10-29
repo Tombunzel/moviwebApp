@@ -26,7 +26,7 @@ class SQLiteDataManager(DataManagerInterface):
     def get_user_movies(self, user_id):
         """returns all movies of certain user"""
         return self.db.session.execute(
-            self.db.select(Movie).where(Movie.user_favourite == user_id)
+            self.db.select(Movie).where(Movie.user_id == user_id)
         ).scalars().all()
 
     def add_user(self, name):
