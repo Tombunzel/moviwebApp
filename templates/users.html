@@ -8,6 +8,20 @@
     <title>Users - MovieWeb App</title>
   </head>
   <body>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div id="flash-message" class="flash-message">
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            <a href="#close" class="close-button">&times;</a>
+        </div>
+    {% endif %}
+    {% endwith %}
+
     <h1>Users</h1>
       <ul>
         {% for user in users %}
