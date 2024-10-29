@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>MovieWeb App</title>
+  </head>
+  <body>
+
+      {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div id="flash-message" class="flash-message">
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            <a href="#close" class="close-button">&times;</a>
+        </div>
+    {% endif %}
+    {% endwith %}
+
+    <h1>Welcome to the MoviewebApp!</h1>
+  </body>
+</html>

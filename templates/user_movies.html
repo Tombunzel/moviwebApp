@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Users - MovieWeb App</title>
+  </head>
+  <body>
+    <h1>User {{ user_id }} Movies</h1>
+      <div>
+        {% for movie in movies %}
+          <div class="movie-container">
+              <img class="movie-poster" src="{{ movie.poster_url }}" title="{{ movie.note }}"/>
+              <h3>{{ movie.name }}</h3>
+              <p>{{ movie.year }}</p>
+              <a href="{{ movie.imdb_url }}" target="_blank">
+                <img class="flag-icon" src="{{ movie.flag_url }}">
+              </a>
+              <p>{{ movie.rating }}</p>
+              <form class="action_button" action="/users/{{ user_id }}/update_movie/{{ movie.id }}>" method="post">
+                <input type="hidden" name="user_id" value="{{ user_id }}">
+                <input type="hidden" name="movie_id" value="{{ movie.id }}">
+                <input type="submit" value="Update Movie" class="action-button">
+              </form>
+
+          </div>
+        {% endfor %}
+      </div>
+  </body>
+</html>
