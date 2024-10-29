@@ -24,6 +24,10 @@
 
     <h1>User {{ user_id }} Movies</h1>
       <div>
+        {% if not movies %}
+          <p>No movies saved to this user <br>
+          Add movies here:</p>
+        {% endif %}
         {% for movie in movies %}
           <div class="movie-container">
               <img class="movie-poster" src="{{ movie.poster_url }}" title="{{ movie.note }}"/>
@@ -47,5 +51,8 @@
           </div>
         {% endfor %}
       </div>
+    <form action="/users/{{ user_id }}/add_movie" method="get">
+      <input type="submit" value="Add Movie">
+    </form>
   </body>
 </html>
