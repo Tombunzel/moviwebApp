@@ -15,6 +15,18 @@ class SQLiteDataManager(DataManagerInterface):
         with app.app_context():
             self.db.create_all()
 
+    def user_exists(self, user_id):
+        user_exists = self.db.session.execute(self.db.select(User).where(User.id == user_id)).scalar_one_or_none()
+        if user_exists:
+            return True
+        return False
+
+    def movie_exists(self, movie_id):
+        movie_exists = self.db.session.execute(self.db.select(Movie).where(Movie.id == movie_id)).scalar_one_or_none()
+        if movie_exists:
+            return True
+        return False
+
     def get_all_users(self):
         """returns all users in database"""
         return self.db.session.execute(self.db.select(User)).scalars().all()
