@@ -1,8 +1,7 @@
 import os
 import sqlalchemy
 from flask import Flask, render_template, request, flash, redirect, url_for
-from sqlalchemy import and_
-
+from sqlalchemy import and_, delete
 from datamanager.sqlite_data_manager import SQLiteDataManager
 from models import User, Movie, db
 
@@ -10,27 +9,30 @@ app = Flask(__name__)
 
 # Database path
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/moviwebapp.sqlite')
+# App configurations
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_PATH}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
-
 # Initialize SQLiteDataManager
 data_manager = SQLiteDataManager(app)
 
 
 @app.route('/')
 def home():
+    """home page route"""
     return render_template('home.html'), 200
 
 
 @app.route('/users')
 def list_users():
+    """route that displays all the available users"""
     users = data_manager.get_all_users()
     return render_template('users.html', users=users), 200
 
 
 @app.route('/users/<int:user_id>', methods=['GET'])
 def user_movies(user_id):
+    """route that displays all the movies favorited by a certain user"""
     movies = data_manager.get_user_movies(user_id)
     return render_template('user_movies.html',
                            movies=movies,
@@ -39,43 +41,32 @@ def user_movies(user_id):
 
 @app.route('/add_user', methods=['GET', 'POST'])
 def add_user():
+    """route that handles a form to add a user"""
     if request.method == 'POST':
         user_name = request.form['name']
         data_manager.add_user(name=user_name)
         flash("User created successfully", "success")
-        return redirect(url_for('home')), 201
+        return redirect(url_for('home'))
     else:
         return render_template('add_user.html'), 200
 
 
 @app.route('/users/<int:user_id>/add_movie', methods=['GET', 'POST'])
 def add_movie(user_id):
+    """route that adds a movie to a certain user"""
     if request.method == 'POST':
         name = request.form['name']
-        try:
-            result = db.session.execute(
-                db.select(Movie)
-                .where(and_(Movie.name == name,
-                            Movie.user_id == user_id))
-            ).scalars().one()
-
-        except sqlalchemy.exc.NoResultFound:
-            result = False
-
-        if result:
-            movie = result
-        else:
-            movie = Movie(name=name)
-            data_manager.add_movie(movie, user_id)
-        # data_manager.add_favorite_movie(user_id, movie.id)
+        movie = Movie(name=name)
+        data_manager.add_movie(movie, user_id)
         flash("Movie successfully saved to user", "success")
         return redirect(url_for("home"))
     else:
-        return render_template('add_movie.html', user_id=user_id), 200
+        return render_template('add_movie.html', user_id=user_id)
 
 
 @app.route('/users/<int:user_id>/update_movie/<int:movie_id>', methods=['GET', 'POST'])
 def update_movie(user_id, movie_id):
+    """route that allows the user to update movie information"""
     movie_to_update = db.session.execute(
         db.select(Movie)
         .where(and_(Movie.id == movie_id,
@@ -101,28 +92,23 @@ def update_movie(user_id, movie_id):
         return render_template('update_movie.html', movie=movie_to_update)
 
 
-@app.route('/users/<int:user_id>/delete_movie/<int:movie_id>', methods=['GET'])
+@app.route('/users/<int:user_id>/delete_movie/<int:movie_id>', methods=['POST'])
 def delete_movie(user_id, movie_id):
+    """route to delete a movie from user favorites"""
     movie = db.session.execute(
         db.select(Movie)
-        .where(Movie.id == movie_id)
-    ).scalars().one()
-    user = db.session.execute(
-        db.select(User)
-        .where(User.id == user_id)
-    ).scalars().one()
+        .where(and_(Movie.id == movie_id,
+                    Movie.user_id == user_id))
+    ).scalar_one_or_none()
 
-    if not user or not movie:
-        raise ValueError("User or Movie not found")
+    if not movie:
+        message = "Couldn't find movie in database"
+        return render_template('404.html', error=message), 404
 
-    if movie in user.favorite_movies:
-        user.favorite_movies.remove(movie)
-        db.session.commit()
-        flash("Movie successfully removed from user's favorites", "success")
-        return redirect(url_for('home')), 204
-    else:
-        flash("Movie is not in user's favorites", "danger")
-        return redirect(url_for('home')), 404
+    db.session.delete(movie)
+    db.session.commit()
+    flash("Movie successfully removed from user's favorites", "success")
+    return redirect(url_for('user_movies', user_id=user_id))
 
 
 @app.errorhandler(404)
