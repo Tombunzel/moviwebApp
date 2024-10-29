@@ -8,7 +8,7 @@
   </head>
   <body>
 
-  <form action="/users/{{ user.id }}/update_movie/{{ movie.id }}" method="POST">
+  <form action="/users/{{ movie.user_id }}/update_movie/{{ movie.id }}" method="POST">
   <label for="name">Movie Name:</label>
   <input type="text" id="name" name="name" value="{{ movie.name }}" required><br><br>
   <label for="director">Director:</label>

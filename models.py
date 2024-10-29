@@ -6,23 +6,14 @@ from sqlalchemy.orm import relationship
 db = SQLAlchemy()
 
 
-# Association Table for the many-to-many relationship between Users and Movies
-user_movie_favorites = Table(
-    'user_movie_favorites',
-    db.Model.metadata,
-    Column('user_id', Integer, ForeignKey('users.id'), primary_key=True),
-    Column('movie_id', Integer, ForeignKey('movies.id'), primary_key=True)
-)
-
-
 class User(db.Model):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
 
-    # Many-to-Many relationship with Movie
-    favorite_movies = relationship("Movie", secondary=user_movie_favorites, back_populates="favorited_by")
+    # Relationship to Movie
+    movies = relationship("Movie", back_populates="user")
 
     def __init__(self, name):
         self.name = name
@@ -41,9 +32,10 @@ class Movie(db.Model):
     rating = Column(Float)
     poster_url = Column(String, nullable=True)
     imdb_url = Column(String, nullable=True)
+    user_id = Column(Integer, ForeignKey(User.id))
 
-    # Many-to-Many relationship with User
-    favorited_by = relationship("User", secondary=user_movie_favorites, back_populates="favorite_movies")
+    # Relationship to User
+    user = relationship("User", back_populates="movies")
 
     def __repr__(self):
         return f"Movie {self.name} ({self.year}): rated {self.rating}"

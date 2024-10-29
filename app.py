@@ -1,6 +1,8 @@
 import os
 import sqlalchemy
 from flask import Flask, render_template, request, flash, redirect, url_for
+from sqlalchemy import and_
+
 from datamanager.sqlite_data_manager import SQLiteDataManager
 from models import User, Movie, db
 
@@ -51,19 +53,21 @@ def add_movie(user_id):
     if request.method == 'POST':
         name = request.form['name']
         try:
-            result = db.session.execute(db.select(Movie).where(Movie.name == name)).one()
+            result = db.session.execute(
+                db.select(Movie)
+                .where(and_(Movie.name == name,
+                            Movie.user_id == user_id))
+            ).scalars().one()
+
         except sqlalchemy.exc.NoResultFound:
             result = False
 
         if result:
-            movie = db.session.execute(
-                db.select(Movie)
-                .where(Movie.name == name)
-            ).scalars().one()
+            movie = result
         else:
             movie = Movie(name=name)
             data_manager.add_movie(movie, user_id)
-        data_manager.add_favorite_movie(user_id, movie.id)
+        # data_manager.add_favorite_movie(user_id, movie.id)
         flash("Movie successfully saved to user", "success")
         return redirect(url_for("home"))
     else:
@@ -72,20 +76,17 @@ def add_movie(user_id):
 
 @app.route('/users/<int:user_id>/update_movie/<int:movie_id>', methods=['GET', 'POST'])
 def update_movie(user_id, movie_id):
-    movie = db.session.execute(
+    movie_to_update = db.session.execute(
         db.select(Movie)
-        .where(Movie.id == movie_id)
-    ).scalars().one()
-    user = db.session.execute(
-        db.select(User)
-        .where(User.id == user_id)
+        .where(and_(Movie.id == movie_id,
+                    Movie.user_id == user_id))
     ).scalars().one()
 
-    if not user or not movie:
-        raise ValueError("User or Movie not found")
+    if not movie_to_update:
+        flash("Couldn't find movie in the database")
+        return redirect(url_for('home'))
 
     if request.method == 'POST':
-        movie_to_update = movie
         movie_to_update.name = request.form['name']
         movie_to_update.director = request.form['director']
         movie_to_update.rating = request.form['rating']
@@ -95,7 +96,7 @@ def update_movie(user_id, movie_id):
         return redirect(url_for('home'))
 
     else:
-        return render_template('update_movie.html', movie=movie, user=user)
+        return render_template('update_movie.html', movie=movie_to_update)
 
 
 @app.route('/users/<int:user_id>/delete_movie/<int:movie_id>', methods=['GET'])
