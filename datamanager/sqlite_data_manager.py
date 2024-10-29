@@ -54,7 +54,15 @@ class SQLiteDataManager(DataManagerInterface):
         The movie is then added to the session and the addition commited.
         """
         omdb_dict = fetch_api_movie_dict(movie.name)
-        movie.rating = float(omdb_dict['Ratings'][0]['Value'].split('/')[0])
+        try:
+            return omdb_dict['Error']
+        except KeyError:
+            pass
+        ratings = omdb_dict['Ratings']
+        if ratings:
+            movie.rating = float(omdb_dict['Ratings'][0]['Value'].split('/')[0])
+        else:
+            movie.rating = None
         movie.poster_url = omdb_dict['Poster']
         movie.imdb_url = f"https://www.imdb.com/title/{omdb_dict['imdbID']}"
         movie.director = omdb_dict['Director']
