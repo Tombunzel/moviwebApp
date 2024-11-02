@@ -10,7 +10,7 @@ MOVIE_URL = f'http://www.omdbapi.com/?apikey={API_KEY}&t='
 
 def fetch_api_movie_dict(movie_title):
     """fetches information about given movie and returns it as a dictionary"""
-    res = requests.get(MOVIE_URL + movie_title)
+    res = requests.get(MOVIE_URL + movie_title, timeout=7)
     movie_dict = res.json()
     return movie_dict
 
