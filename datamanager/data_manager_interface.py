@@ -7,29 +7,23 @@ class DataManagerInterface(ABC):
     @abstractmethod
     def get_all_users(self):
         """this function will be implemented by each data manager"""
-        pass
 
     @abstractmethod
     def get_user_movies(self, user_id):
         """this function will be implemented by each data manager"""
-        pass
 
     @abstractmethod
-    def add_user(self, user):
+    def add_user(self, name):
         """this function will be implemented by each data manager"""
-        pass
 
     @abstractmethod
     def add_movie(self, movie, user_id):
         """this function will be implemented by each data manager"""
-        pass
 
     @abstractmethod
     def update_movie(self, movie, info):
         """this function will be implemented by each data manager"""
-        pass
 
     @abstractmethod
-    def delete_movie(self, movie):
+    def delete_movie(self, movie_id):
         """this function will be implemented by each data manager"""
-        pass
