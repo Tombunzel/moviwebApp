@@ -4,55 +4,183 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <title>Users - MovieWeb App</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/inter-ui/3.19.3/inter.css" rel="stylesheet">
+    <title>Movies - MovieWeb App</title>
+    <style>
+      :root {
+        --bs-body-bg: #0f172a;
+        --bs-body-color: #e2e8f0;
+        --bs-body-font-family: 'Inter', sans-serif;
+      }
+
+      .card {
+        background: #1e293b;
+        border: none;
+        transition: transform 0.2s;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+      }
+
+      .card-body {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        padding-top: 0.75rem;
+      }
+
+      .card-content {
+        flex-grow: 1;
+      }
+
+      .card-title {
+        color: #f8fafc;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .btn-primary {
+        background-color: #6366f1;
+        border-color: #6366f1;
+      }
+
+      .btn-primary:hover {
+        background-color: #4f46e5;
+        border-color: #4f46e5;
+      }
+
+      .btn-outline-primary {
+        color: #6366f1;
+        border-color: #6366f1;
+      }
+
+      .btn-outline-primary:hover {
+        background-color: #6366f1;
+        border-color: #6366f1;
+      }
+
+      .btn-outline-danger {
+        color: #ef4444;
+        border-color: #ef4444;
+      }
+
+      .btn-outline-danger:hover {
+        background-color: #ef4444;
+        border-color: #ef4444;
+      }
+
+      .btn-secondary {
+        background-color: #475569;
+        border-color: #475569;
+      }
+
+      .btn-secondary:hover {
+        background-color: #334155;
+        border-color: #334155;
+      }
+
+      .alert-info {
+        background-color: #1e293b;
+        border-color: #6366f1;
+        color: #e2e8f0;
+      }
+
+      .movie-poster {
+        aspect-ratio: 2/3;
+        object-fit: cover;
+        width: 100%;
+      }
+
+      .button-container {
+        margin-top: 1rem;
+      }
+
+      .movie-info {
+        line-height: 1.2;
+        margin-top: 0;
+      }
+
+      .movie-rating {
+        margin-top: 0.25rem;
+      }
+    </style>
   </head>
   <body>
+    <div class="container py-4">
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      <div id="flash-message" class="alert alert-info alert-dismissible fade show shadow-sm" role="alert">
+        <ul class="mb-0 list-unstyled">
+          {% for message in messages %}
+          <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endif %}
+      {% endwith %}
 
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-        <div id="flash-message" class="flash-message">
-            <ul>
-                {% for message in messages %}
-                    <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
-            <a href="#close" class="close-button">&times;</a>
-        </div>
-    {% endif %}
-    {% endwith %}
+      <h1 class="mb-4 fw-bold text-center">User {{ user_id }} Movies</h1>
 
-    <h1>User {{ user_id }} Movies</h1>
-      <div>
-        {% if not movies %}
-          <p>No movies saved to this user <br>
-          Add movies here:</p>
-        {% endif %}
+      {% if not movies %}
+      <div class="text-center my-5">
+        <p class="lead">No movies saved to this user</p>
+      </div>
+      {% endif %}
+
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
         {% for movie in movies %}
-          <div class="movie-container">
-              <img class="movie-poster" src="{{ movie.poster_url }}" title="{{ movie.note }}"/>
-              <h3>{{ movie.name }}</h3>
-              <p>{{ movie.year }}</p>
-              <a href="{{ movie.imdb_url }}" target="_blank">
-                <img class="flag-icon" src="{{ movie.flag_url }}">
-              </a>
-              <p>{{ movie.rating }}</p>
-              <form class="action_button" action="/users/{{ user_id }}/update_movie/{{ movie.id }}" method="get">
-                <input type="hidden" name="user_id" value="{{ user_id }}">
-                <input type="hidden" name="movie_id" value="{{ movie.id }}">
-                <input type="submit" value="Update Movie" class="action-button">
-              </form>
-              <form class="action_button" action="/users/{{ user_id }}/delete_movie/{{ movie.id }}" method="post">
-                <input type="hidden" name="user_id" value="{{ user_id }}">
-                <input type="hidden" name="movie_id" value="{{ movie.id }}">
-                <input type="submit" value="Delete Movie" class="delete-button">
-              </form>
+        <div class="col">
+          <div class="card shadow">
+            <a href="{{ movie.imdb_url }}" target="_blank" class="text-decoration-none">
+              <img class="movie-poster rounded-top" src="{{ movie.poster_url }}" alt="{{ movie.name }}" title="{{ movie.note }}"/>
+            </a>
+            <div class="card-body">
+              <div class="card-content">
+                <h5 class="card-title fw-bold">{{ movie.name }}</h5>
+                <div class="movie-info">
+                  <p class="card-text text-secondary mb-0">
+                    {{ movie.year }}
+                    <img class="ms-2" style="height: 20px;" src="{{ movie.flag_url }}" alt="Country flag">
+                  </p>
+                  <p class="card-text text-warning movie-rating">{{ movie.rating }}</p>
+                </div>
+              </div>
 
+              <div class="button-container d-flex gap-2">
+                <form action="/users/{{ user_id }}/update_movie/{{ movie.id }}" method="get" class="flex-fill">
+                  <button type="submit" class="btn btn-outline-primary w-100 fw-semibold">Update</button>
+                </form>
+                <form action="/users/{{ user_id }}/delete_movie/{{ movie.id }}" method="post" class="flex-fill">
+                  <button type="submit" class="btn btn-outline-danger w-100 fw-semibold">Delete</button>
+                </form>
+              </div>
+            </div>
           </div>
+        </div>
         {% endfor %}
       </div>
-    <form action="/users/{{ user_id }}/add_movie" method="get">
-      <input type="submit" value="Add Movie">
-    </form>
+
+      <div class="d-flex gap-3 justify-content-center mt-5">
+        <form action="/users/{{ user_id }}/add_movie" method="get">
+          <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold">Add Movie</button>
+        </form>
+        <form action="/users" method="get">
+          <button type="submit" class="btn btn-secondary px-4 py-2 fw-semibold">Back to Users</button>
+        </form>
+        <form action="/users/{{ user_id }}/delete_user" method="get">
+          <button type="submit" class="btn btn-danger px-4 py-2 fw-semibold">Delete User</button>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

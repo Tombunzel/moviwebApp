@@ -1,25 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <title>Update Movie</title>
-  </head>
-  <body>
+{% extends "base.html" %}
 
-  <form action="/users/{{ movie.user_id }}/update_movie/{{ movie.id }}" method="POST">
-  <label for="name">Movie Name:</label>
-  <input type="text" id="name" name="name" value="{{ movie.name }}" required><br><br>
-  <label for="director">Director:</label>
-  <input type="text" id="director" name="director" value="{{ movie.director }}" required><br><br>
-  <label for="year">Year Released:</label>
-  <input type="number" id="year" name="year" value="{{ movie.year }}" required><br><br>
-  <label for="rating">Rating:</label>
-  <input type="number" step="0.01" id="rating" name="rating" value="{{ movie.rating }}" required><br><br>
-  <input type="submit" value="Update Movie">
-  </form>
-
-  </body>
-</html>
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow-sm p-4 mx-auto" style="max-width: 500px;">
+        <h2 class="text-center mb-4">Update Movie</h2>
+        <form action="/users/{{ movie.user_id }}/update_movie/{{ movie.id }}" method="post">
+            <div class="mb-3">
+                <label for="name" class="form-label">Movie Name:</label>
+                <input type="text" class="form-control" id="name" name="name" value="{{ movie.name }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="director" class="form-label">Director:</label>
+                <input type="text" class="form-control" id="director" name="director" value="{{ movie.director }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="year" class="form-label">Year Released:</label>
+                <input type="number" class="form-control" id="year" name="year" value="{{ movie.year }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="rating" class="form-label">Rating:</label>
+                <input type="text" class="form-control" id="rating" name="rating" value="{{ movie.rating }}" required>
+            </div>
+            <div class="d-flex gap-3 justify-content-center mt-4">
+                <button type="submit" class="btn btn-primary px-4">Update Movie</button>
+                <a href="/users/{{ movie.user_id }}" class="btn btn-secondary px-4">Back</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
