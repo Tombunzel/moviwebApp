@@ -1,0 +1,203 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-align: center;
+  line-height: 1.6;
+  background-color: #f5f5f5;
+  padding: 2rem;
+}
+
+h1 {
+  text-align: center;
+  color: #0F0B4B;
+}
+
+p {
+    font-style: italic;
+    text-align: center;
+}
+
+ul {
+    text-align: center;
+    list-style-type: none;
+}
+
+li {
+    font-size: 1.25em;
+}
+
+form {
+
+}
+
+/* Movies Grid */
+.movies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); /* Responsive columns */
+  gap: 0.5rem; /* Space between grid items */
+  padding: 1.25rem; /* Padding around the grid */
+  max-width: 75rem; /* Max width for the grid */
+  margin: 0 auto; /* Center the grid */
+}
+
+/* Movie Container */
+.movie-container {
+  background-color: white;
+  border: 0.06rem solid #ddd;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 15rem;
+  height: 31rem; /* Set a fixed height to align buttons across containers */
+  position: relative; /* Position relative to allow absolute positioning */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Movie Poster */
+.movie-poster {
+  width: 100%;
+  object-fit: cover;
+  border-bottom: 0.06rem solid #ddd;
+  margin-bottom: 0.5rem;
+}
+
+.nav-button-container {
+  display: flex;
+  justify-content: center; /* Center the buttons */
+  gap: 1rem; /* Space between buttons */
+  margin-top: 2rem; /* Space above the container */
+}
+
+.nav-btn {
+  padding: 0.5rem 1.5rem; /* Button padding */
+  border: none;
+  border-radius: 0.25rem;
+  background-color: #007bff; /* Button background color */
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.nav-btn:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+
+/* Action Buttons Container */
+.action-button-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.625rem;
+  position: absolute;
+  bottom: 0; /* Aligns the container at the bottom */
+  width: 100%;
+}
+
+/* Button Styles */
+.action-btn {
+  padding: 0.5rem 1rem; /* Padding for buttons */
+  border: none; /* Remove default border */
+  border-radius: 0.25rem; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor */
+  transition: background-color 0.3s; /* Smooth transition for hover */
+}
+
+.update-btn {
+  background-color: #41a0cc; /* Green color */
+  color: white; /* White text */
+}
+
+.delete-btn {
+  background-color: #d84e36; /* Red color */
+  color: white; /* White text */
+}
+
+.action-btn:hover {
+  opacity: 0.8; /* Slightly fade on hover */
+}
+
+.flag-icon {
+  height: 1em;
+  vertical-align: center;
+  padding-top: 0.2em;
+}
+
+.flash-message {
+  position: fixed;
+  top: 5%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #4caf50;
+  color: white;
+  padding: 0.9375rem 1.25rem; /* Padding for the message */
+  border-radius: 0.3125rem;
+  box-shadow: 0 0.125rem 0.625rem rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: block;
+  opacity: 1;
+  animation: fade-in 0.5s ease-in-out forwards, fade-out 3s ease-in-out forwards 2.5s;
+}
+
+.flash-message ul {
+  padding-left: 0.4375rem;
+  padding-right: 0.4375rem;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.25rem;
+  cursor: pointer;
+  text-decoration: none;
+  position: absolute;
+  top: 0.625rem;
+  right: 0.625rem;
+}
+
+.close:target + .flash-message {
+  display: none;
+  opacity: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 48rem) {
+  .movies-grid {
+    grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr)); /* Adjust for smaller screens */
+  }
+}
+
+@media (max-width: 30rem) {
+  .movies-grid {
+    grid-template-columns: 1fr; /* Single column for very small screens */
+  }
+}
