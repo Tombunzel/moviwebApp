@@ -21,8 +21,12 @@
                 <label for="rating" class="form-label">Rating:</label>
                 <input type="text" class="form-control" id="rating" name="rating" value="{{ movie.rating }}" required>
             </div>
+            <div class="mb-3">
+                <label for="review" class="form-label">Review:</label>
+                <input type="text" class="form-control" id="review" name="review" value="{{ movie.review }}">
+            </div>
             <div class="d-flex gap-3 justify-content-center mt-4">
-                <button type="submit" class="btn btn-primary px-4">Update Movie</button>
+                <button type="submit" class="btn btn-outline-primary fw-semibold px-4">Update Movie</button>
                 <a href="/users/{{ movie.user_id }}" class="btn btn-secondary px-4">Back</a>
             </div>
         </form>
