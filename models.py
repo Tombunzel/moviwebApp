@@ -40,6 +40,7 @@ class Movie(db.Model):
     flag_url = Column(String, nullable=True)
     imdb_url = Column(String, nullable=True)
     user_id = Column(Integer, ForeignKey(User.id))
+    review = Column(String)
 
     # Relationship to User
     user = relationship("User", back_populates="movies")
