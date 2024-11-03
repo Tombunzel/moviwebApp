@@ -101,7 +101,8 @@ def update_movie(user_id, movie_id):
             'name': request.form['name'],
             'director': request.form['director'],
             'rating': request.form['rating'],
-            'year': request.form['year']
+            'year': request.form['year'],
+            'review': request.form['review']
         }
         data_manager.update_movie(movie_to_update, new_info)
         flash("Movie successfully updated", "success")
@@ -236,9 +237,9 @@ def page_not_found(e):
     return render_template('404.html', error=e), 404
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
     # with app.app_context():
     #     db.drop_all()  # Drops all tables
     #     db.create_all()  # Recreates them with the latest schema
 
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    # app.run(host="0.0.0.0", port=5000, debug=True)
