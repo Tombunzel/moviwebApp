@@ -2,6 +2,7 @@ import os
 import sqlalchemy
 from flask import Flask, render_template, request, flash, redirect, url_for
 from sqlalchemy import and_
+from datamanager import openai_api
 from datamanager.sqlite_data_manager import SQLiteDataManager
 from models import User, Movie, db
 
@@ -142,7 +143,11 @@ def delete_user(user_id):
 
 @app.route('/users/<int:user_id>/add_review/<int:movie_id>', methods=['GET', 'POST'])
 def add_review(user_id, movie_id):
-    """route to add a user review to a movie"""
+    """
+    route to add a user review to a movie
+    if the user clicks on 'generate review', openai_api will generate a review
+    and insert it into the template
+    """
     movie = db.session.execute(
         db.select(Movie)
         .where(and_(Movie.id == movie_id,
@@ -154,6 +159,13 @@ def add_review(user_id, movie_id):
         return redirect(url_for('user_movies', user_id=user_id))
 
     if request.method == 'POST':
+        try:
+            generate = request.form['generate']
+            review = openai_api.generate_review(movie.name)
+            return render_template('add_review.html', movie=movie, review=review)
+        except KeyError:
+            pass
+
         review = request.form['review']
         data_manager.add_review(movie, review)
         flash("Review successfully added", "success")
@@ -171,6 +183,35 @@ def show_review(user_id, movie_id):
                     Movie.user_id == user_id))
     ).scalar_one_or_none()
     return render_template('show_review.html', movie=movie)
+
+
+@app.route('/users/<int:user_id>/recommendation', methods=['GET'])
+def get_recommendation(user_id):
+    """
+    based on the movies saved to a user, openai_api will recommend a new movie
+    """
+    movies = db.session.execute(db.select(Movie).where(Movie.user_id == user_id)).scalars().all()
+    recommendation = openai_api.generate_recommendation(movies)
+    return render_template('recommendation.html', recommendation=recommendation, user_id=user_id)
+
+
+@app.route('/users/<int:user_id>/trivia/<int:movie_id>')
+def get_trivia(user_id, movie_id):
+    """
+    based on movie and user ID, this function uses
+    openai_api to generate a trivia about the movie
+    """
+    movie = db.session.execute(
+        db.select(Movie)
+        .where(and_(Movie.id == movie_id,
+                    Movie.user_id == user_id))
+    ).scalar_one_or_none()
+
+    if not movie:
+        return {"trivia": "Movie not found"}, 404
+
+    trivia = openai_api.generate_trivia(movie.name)
+    return {"trivia": trivia}, 200
 
 
 @app.errorhandler(404)
