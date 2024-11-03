@@ -27,3 +27,7 @@ class DataManagerInterface(ABC):
     @abstractmethod
     def delete_movie(self, movie_id):
         """this function will be implemented by each data manager"""
+
+    @abstractmethod
+    def add_review(self, movie, review):
+        """this function will be implemented by each data manager"""
