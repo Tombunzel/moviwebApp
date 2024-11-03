@@ -9,7 +9,7 @@
       <div class="mask position-relative h-100 z-1" style="background-color: rgba(0, 0, 0, 0.6);">
         <h2 class="text-center mb-4 p-4">User Review</h2>
         <h5 class="text-center mb-4 fw-bold">{{ movie.name }}</h5>
-        <div class="text-center mb-5">{{ movie.review }}</div>
+        <div class="text-center mb-5 mx-4">{{ movie.review }}</div>
         <div class="d-flex gap-3 justify-content-center mt-4 mb-4">
           <a href="/users/{{ movie.user_id }}/add_review/{{ movie.id }}" class="btn btn-outline-primary fw-semibold px-4">Edit Review</a>
           <a href="/users/{{ movie.user_id }}" class="btn btn-secondary px-4">Back</a>
