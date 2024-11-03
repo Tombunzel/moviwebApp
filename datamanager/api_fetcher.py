@@ -4,7 +4,7 @@ import country_converter as coco
 from dotenv import load_dotenv
 
 load_dotenv()
-API_KEY = os.environ.get('API_KEY')
+API_KEY = os.environ.get('OMDB_KEY')
 MOVIE_URL = f'http://www.omdbapi.com/?apikey={API_KEY}&t='
 
 
