@@ -31,7 +31,7 @@ def generate_recommendation(movies):
         "Content-Type": "application/json"
     }
 
-    return requests.post(URL, json=payload, headers=headers).json()['result']
+    return requests.post(URL, json=payload, headers=headers)
 
 
 def generate_review(movie_name):
@@ -55,8 +55,7 @@ def generate_review(movie_name):
         "x-rapidapi-host": "chatgpt-42.p.rapidapi.com",
         "Content-Type": "application/json"
     }
-
-    return requests.post(URL, json=payload, headers=headers).json()['result']
+    return requests.post(URL, json=payload, headers=headers)
 
 
 def generate_trivia(movie_name):
