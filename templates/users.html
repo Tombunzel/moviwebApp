@@ -2,21 +2,7 @@
 
 {% block content %}
 <div class="container py-4">
-  {% with messages = get_flashed_messages() %}
-  {% if messages %}
-      <div id="flash-message" class="alert alert-info alert-dismissible fade show shadow-sm" role="alert">
-          <ul class="mb-0 list-unstyled">
-              {% for message in messages %}
-                  <li>{{ message }}</li>
-              {% endfor %}
-          </ul>
-          <button type="button" class="btn-close btn-close-dark" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-  {% endif %}
-  {% endwith %}
-
   <h1 class="mb-4 fw-bold text-center">Users</h1>
-
   <!-- User List -->
   <div class="rounded p-4" style="background: linear-gradient(135deg, #1e293b, #0f172a); max-width: 600px; width: 100%; margin: 0 auto;">
     <ul class="list-unstyled text-center mb-4">
