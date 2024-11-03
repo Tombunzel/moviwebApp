@@ -162,6 +162,17 @@
                   <button type="submit" class="btn btn-outline-danger w-100 fw-semibold">Delete</button>
                 </form>
               </div>
+              <div class="button-container d-flex">
+                {% if movie.review %}
+                <form action="/users/{{ user_id }}/show_review/{{ movie.id }}" method="get" class="flex-fill">
+                  <button type="submit" class="btn btn-outline-info w-100 fw-semibold">Show Review</button>
+                </form>
+                {% else %}
+                <form action="/users/{{ user_id }}/add_review/{{ movie.id }}" method="get" class="flex-fill">
+                  <button type="submit" class="btn btn-outline-info w-100 fw-semibold">Add Review</button>
+                </form>
+                {% endif %}
+              </div>
             </div>
           </div>
         </div>
