@@ -10,18 +10,26 @@ db = SQLAlchemy()
 
 
 class User(db.Model, UserMixin):
+    """
+    users table with id, name, password hash
+    and one-to-many relationship to movies
+    """
+    __tablename__ = "users"
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(128))
 
+    # Relationship to Movie
+    movies = relationship("Movie", back_populates="user")
+
     def set_password(self, password):
+        """generate password hash"""
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
+        """check password hash"""
         return check_password_hash(self.password_hash, password)
-
-    # Relationship to Movie
-    movies = relationship("Movie", back_populates="user")
 
     def __repr__(self):
         """visual representation of a user object"""
