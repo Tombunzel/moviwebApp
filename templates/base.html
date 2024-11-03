@@ -19,13 +19,57 @@
             --primary-color: #6366f1;
             --secondary-color: #475569;
             --danger-color: #ef4444;
+            --nav-bg: #1e293b;
         }
 
         /* Base body styles */
         body {
             background-color: var(--bs-body-bg);
             color: var(--bs-body-color);
-            font-family: 'Roboto', sans-serif; /* Set Roboto as the main font */
+            font-family: 'Roboto', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background-color: var(--nav-bg);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .navbar-brand {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--bs-body-color);
+            font-weight: 700;
+        }
+
+        .nav-link {
+            color: var(--bs-body-color);
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        .navbar .dropdown-menu {
+            background-color: var(--nav-bg);
+            border: 1px solid var(--secondary-color);
+        }
+
+        .navbar .dropdown-item {
+            color: var(--bs-body-color);
+        }
+
+        .navbar .dropdown-item:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .navbar .dropdown-divider {
+            border-top: 1px solid var(--secondary-color);
         }
 
         /* Card Styles */
@@ -48,18 +92,99 @@
             font-family: 'Montserrat', sans-serif;
         }
 
-      .btn-outline-primary {
-        color: #6366f1;
-        border-color: #6366f1;
-      }
+        .btn-outline-primary {
+            color: #6366f1;
+            border-color: #6366f1;
+        }
 
-      .btn-outline-primary:hover {
-        background-color: #6366f1;
-        border-color: #6366f1;
-      }
+        .btn-outline-primary:hover {
+            background-color: #6366f1;
+            border-color: #6366f1;
+        }
+
+        /* Alert Styles */
+        .alert {
+            background-color: var(--nav-bg);
+            border: 1px solid var(--primary-color);
+            color: var(--bs-body-color);
+        }
+
+        .alert-success {
+            border-color: #10b981;
+        }
+
+        .alert-danger {
+            border-color: var(--danger-color);
+        }
     </style>
 </head>
 <body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('home') }}">MovieWeb App</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('home') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('list_users') }}">Users</a>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav">
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ current_user.name }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('user_movies', user_id=current_user.id) }}">
+                                        My Movies
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('add_user') }}">Register</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
     {% block content %}{% endblock %}
 
     <!-- Bootstrap JS Bundle (includes Popper) -->
