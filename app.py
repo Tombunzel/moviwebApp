@@ -161,8 +161,16 @@ def add_review(user_id, movie_id):
     if request.method == 'POST':
         try:
             generate = request.form['generate']
-            review = openai_api.generate_review(movie.name)
-            return render_template('add_review.html', movie=movie, review=review)
+            response = openai_api.generate_review(movie.name)
+            if response.status_code == 429:
+                flash("Too many requests, couldn't generate a review", "danger")
+                return redirect(url_for('user_movies', user_id=user_id))
+            elif response.status_code == 200:
+                review = response.json()['result']
+                return render_template('add_review.html', movie=movie, review=review)
+            else:
+                flash("Sorry, couldn't generate a review", "danger")
+                return redirect(url_for('user_movies', user_id=user_id))
         except KeyError:
             pass
 
@@ -191,8 +199,16 @@ def get_recommendation(user_id):
     based on the movies saved to a user, openai_api will recommend a new movie
     """
     movies = db.session.execute(db.select(Movie).where(Movie.user_id == user_id)).scalars().all()
-    recommendation = openai_api.generate_recommendation(movies)
-    return render_template('recommendation.html', recommendation=recommendation, user_id=user_id)
+    response = openai_api.generate_recommendation(movies)
+    if response.status_code == 429:
+        flash("Too many requests, couldn't generate a recommendation", "danger")
+        return redirect(url_for('user_movies', user_id=user_id))
+    elif response.status_code == 429:
+        recommendation = response.json()['result']
+        return render_template('recommendation.html', recommendation=recommendation, user_id=user_id)
+    else:
+        flash("Sorry, couldn't generate a recommendation", "danger")
+        return redirect(url_for('user_movies', user_id=user_id))
 
 
 @app.route('/users/<int:user_id>/trivia/<int:movie_id>')
