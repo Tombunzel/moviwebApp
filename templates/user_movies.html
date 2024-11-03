@@ -100,9 +100,48 @@
       .movie-rating {
         margin-top: 0.25rem;
       }
+
+      .trivia-container {
+          padding: 10px;
+          border-radius: 8px;
+          background-color: #fff9e6;
+          color: #333;
+      }
+
+      .modal-content {
+          border-radius: 12px;
+          box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      }
+
+      .modal-header {
+          border-bottom: 2px solid #ffd700;
+      }
+
     </style>
   </head>
   <body>
+  <!-- Add this modal HTML structure somewhere in your template -->
+  <div class="modal fade" id="triviaModal" tabindex="-1" aria-labelledby="triviaModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+              <div class="modal-header bg-warning bg-opacity-10">
+                  <h5 class="modal-title" id="triviaModalLabel">🎬 Movie Trivia</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body" id="triviaContent">
+                  <!-- Trivia content will be loaded here -->
+                  <div class="text-center">
+                      <div class="spinner-border text-warning" role="status">
+                          <span class="visually-hidden">Loading...</span>
+                      </div>
+                  </div>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+          </div>
+      </div>
+  </div>
     <div class="container py-4">
       {% with messages = get_flashed_messages() %}
       {% if messages %}
@@ -154,10 +193,13 @@
                   <button type="submit" class="btn btn-outline-info w-100 fw-semibold">Add Review</button>
                 </form>
                 {% endif %}
-                <form action="/users/{{ user_id }}/trivia" method="get" class="flex-fill">
-                  <input type="hidden" name="trivia" id="trivia" value="trivia">
-                  <button type="submit" class="btn btn-outline-warning w-100 fw-semibold">Fun Trivia</button>
-                </form>
+                <button type="button"
+                        class="btn btn-outline-warning px-4 fw-semibold"
+                        onclick="loadTrivia('{{ user_id }}', '{{ movie.id }}')"
+                        data-user-id="{{ user_id }}"
+                        data-movie-id="{{ movie.id }}">
+                    Fun Trivia
+                </button>
               </div>
               <div class="button-container d-flex gap-2">
                 <form action="/users/{{ user_id }}/update_movie/{{ movie.id }}" method="get" class="flex-fill">
@@ -189,6 +231,54 @@
       </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+  <script>
+      let triviaModal;
+
+      document.addEventListener('DOMContentLoaded', function() {
+          // Initialize the modal
+          triviaModal = new bootstrap.Modal(document.getElementById('triviaModal'));
+      });
+
+      function loadTrivia(userId, movieId) {
+          // Show the modal with loading spinner
+          triviaModal.show();
+
+          // Show loading spinner
+          document.getElementById('triviaContent').innerHTML = `
+              <div class="text-center">
+                  <div class="spinner-border text-warning" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                  </div>
+              </div>
+          `;
+
+          // Fetch trivia data
+          fetch(`/users/${userId}/trivia/${movieId}`)
+              .then(response => response.json())
+              .then(data => {
+                  // Update modal content
+                  document.getElementById('triviaContent').innerHTML = `
+                      <div class="trivia-container">
+                          <div class="mb-3">
+                              ${data.trivia}
+                          </div>
+                          <div class="text-muted small">
+                              <i class="bi bi-info-circle"></i>
+                              Generated at ${new Date().toLocaleTimeString()}
+                          </div>
+                      </div>
+                  `;
+              })
+              .catch(error => {
+                  document.getElementById('triviaContent').innerHTML = `
+                      <div class="alert alert-danger">
+                          Sorry, there was an error loading the trivia. Please try again.
+                      </div>
+                  `;
+                  console.error('Error:', error);
+              });
+      }
+  </script>
   </body>
 </html>
