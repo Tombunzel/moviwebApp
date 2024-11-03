@@ -140,6 +140,39 @@ def delete_user(user_id):
     return redirect(url_for('list_users'))
 
 
+@app.route('/users/<int:user_id>/add_review/<int:movie_id>', methods=['GET', 'POST'])
+def add_review(user_id, movie_id):
+    """route to add a user review to a movie"""
+    movie = db.session.execute(
+        db.select(Movie)
+        .where(and_(Movie.id == movie_id,
+                    Movie.user_id == user_id))
+    ).scalar_one_or_none()
+
+    if not movie:
+        flash("Couldn't find movie in the database")
+        return redirect(url_for('user_movies', user_id=user_id))
+
+    if request.method == 'POST':
+        review = request.form['review']
+        data_manager.add_review(movie, review)
+        flash("Review successfully added", "success")
+        return redirect(url_for('user_movies', user_id=user_id))
+
+    return render_template('add_review.html', movie=movie)
+
+
+@app.route('/users/<int:user_id>/show_review/<int:movie_id>', methods=['GET'])
+def show_review(user_id, movie_id):
+    """route to show a movie's user review"""
+    movie = db.session.execute(
+        db.select(Movie)
+        .where(and_(Movie.id == movie_id,
+                    Movie.user_id == user_id))
+    ).scalar_one_or_none()
+    return render_template('show_review.html', movie=movie)
+
+
 @app.errorhandler(404)
 def page_not_found(e):
     """error handler for 404 status codes"""
