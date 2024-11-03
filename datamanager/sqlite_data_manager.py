@@ -118,3 +118,14 @@ class SQLiteDataManager(DataManagerInterface):
             self.db.delete(Movie).where(Movie.id == movie_id)
         )
         self.db.session.commit()
+
+    def add_review(self, movie, review):
+        """
+        this function adds a review to a movie
+        """
+        self.db.session.execute(
+            self.db.update(Movie)
+            .where(Movie.id == movie.id)
+            .values(review=review)
+        )
+        self.db.session.commit()
