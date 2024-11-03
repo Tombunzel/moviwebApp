@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow-sm p-4 mx-auto" style="max-width: 500px;">
+        <h2 class="text-center mb-4">Add Review</h2>
+        <form action="/users/{{ movie.user_id }}/add_review/{{ movie.id }}" method="POST">
+            <div class="mb-3">
+                <label for="review" class="form-label">Review:</label>
+                <input type="text" class="form-control" id="review" name="review" required style="width: 100%; height: 300%;">
+            </div>
+            <div class="d-flex gap-3 justify-content-center mt-4">
+                <button type="submit" class="btn btn-primary px-4">Add Review</button>
+                <a href="/users/{{ movie.user_id }}" class="btn btn-secondary px-4">Back</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
