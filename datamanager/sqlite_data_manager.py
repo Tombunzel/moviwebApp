@@ -1,6 +1,8 @@
+from sqlalchemy import and_
+
 from models import db, User, Movie
 from datamanager.data_manager_interface import DataManagerInterface
-from datamanager.api_fetcher import fetch_api_movie_dict
+from datamanager.api_fetcher import fetch_api_movie_dict, fetch_country_flag_url
 
 
 class SQLiteDataManager(DataManagerInterface):
@@ -12,17 +14,27 @@ class SQLiteDataManager(DataManagerInterface):
         create tables if they don't exist"""
         self.db = db
         self.db.init_app(app)
-        with app.app_context():
-            self.db.create_all()
 
     def user_exists(self, user_id):
-        user_exists = self.db.session.execute(self.db.select(User).where(User.id == user_id)).scalar_one_or_none()
+        """
+        check if user id exists in the database
+        """
+        user_exists = self.db.session.execute(
+            self.db.select(User)
+            .where(User.id == user_id)
+        ).scalar_one_or_none()
         if user_exists:
             return True
         return False
 
     def movie_exists(self, movie_id):
-        movie_exists = self.db.session.execute(self.db.select(Movie).where(Movie.id == movie_id)).scalar_one_or_none()
+        """
+        check if movie id exists in the database
+        """
+        movie_exists = self.db.session.execute(
+            self.db.select(Movie)
+            .where(Movie.id == movie_id)
+        ).scalar_one_or_none()
         if movie_exists:
             return True
         return False
@@ -43,7 +55,7 @@ class SQLiteDataManager(DataManagerInterface):
 
     def add_user(self, name):
         """adds a user to the database"""
-        new_user = User(name)
+        new_user = User(name=name)
         self.db.session.add(new_user)
         self.db.session.commit()
 
@@ -63,13 +75,22 @@ class SQLiteDataManager(DataManagerInterface):
             movie.rating = float(omdb_dict['Ratings'][0]['Value'].split('/')[0])
         else:
             movie.rating = None
-        movie.poster_url = omdb_dict['Poster']
-        movie.imdb_url = f"https://www.imdb.com/title/{omdb_dict['imdbID']}"
+        movie.name = omdb_dict['Title']
         movie.director = omdb_dict['Director']
         movie.year = omdb_dict['Year']
+
+        movie_in_database = db.session.execute(
+            db.select(Movie)
+            .where(and_(Movie.name == movie.name,
+                        Movie.director == movie.director,
+                        Movie.year == movie.year))).scalar_one_or_none()
+        if movie_in_database:
+            return "Movie already in database"
+        movie.poster_url = omdb_dict['Poster']
+        movie.imdb_url = f"https://www.imdb.com/title/{omdb_dict['imdbID']}"
         movie.user_id = user_id
-        # country = omdb_dict['Country'].split(',')[0]
-        # movie.flag_url = fetch_country_flag_url(str(country))
+        country = omdb_dict['Country'].split(',')[0]
+        movie.flag_url = fetch_country_flag_url(str(country))
         self.db.session.add(movie)
         self.db.session.commit()
 
