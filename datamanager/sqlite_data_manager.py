@@ -1,5 +1,4 @@
 from sqlalchemy import and_
-
 from models import db, User, Movie
 from datamanager.data_manager_interface import DataManagerInterface
 from datamanager.api_fetcher import fetch_api_movie_dict, fetch_country_flag_url
@@ -64,6 +63,10 @@ class SQLiteDataManager(DataManagerInterface):
         This function fetches information about a movie from its name,
         then assigns that information to the movie object.
         The movie is then added to the session and the addition commited.
+        If fetch_api response includes an error, return the error.
+        If the movie is already in the database under the current user,
+        return an error message.
+        If everything went well, return None.
         """
         omdb_dict = fetch_api_movie_dict(movie.name)
         try:
