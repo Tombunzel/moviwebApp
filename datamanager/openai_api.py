@@ -81,4 +81,9 @@ def generate_trivia(movie_name):
         "Content-Type": "application/json"
     }
 
-    return requests.post(URL, json=payload, headers=headers).json()['result']
+    response = requests.post(URL, json=payload, headers=headers)
+    try:
+        result = response.json()['result']
+    except KeyError:
+        return None
+    return result
