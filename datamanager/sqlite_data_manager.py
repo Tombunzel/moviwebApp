@@ -86,7 +86,8 @@ class SQLiteDataManager(DataManagerInterface):
             db.select(Movie)
             .where(and_(Movie.name == movie.name,
                         Movie.director == movie.director,
-                        Movie.year == movie.year))).scalar_one_or_none()
+                        Movie.year == movie.year,
+                        Movie.user_id == user_id))).scalar_one_or_none()
         if movie_in_database:
             return "Movie already in database"
         movie.poster_url = omdb_dict['Poster']
